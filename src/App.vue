@@ -1,10 +1,12 @@
 <template>
-  <v-app id="app">
-    <Header></Header>
-    <Input @addTodo="addTodo"></Input>
-    <List :propsdata="todolists" @deleteTodo="deleteTodo"></List>
-    <Footer @removeAll="deleteAll"></Footer>
-  </v-app>
+  <div class="form">
+    <v-app id="app">
+      <Header></Header>
+      <Input @addTodo="addTodo"></Input>
+      <List :propsdata="todolists" @deleteTodo="deleteTodo"></List>
+      <Footer @removeAll="deleteAll"></Footer>
+    </v-app>
+  </div>
 </template>
 
 <script>
@@ -36,6 +38,12 @@ export default {
 </script>
 
 <style>
+.form{
+  width: 60%;
+  height: 80%;
+  display: block;
+  margin: 0px auto;
+}
 #app{
   text-align: center;
   margin: 40px auto;

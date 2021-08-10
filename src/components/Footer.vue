@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-btn class="delete-all" @click="deleteAll" title="Remove All"><v-icon>far fa-trash-alt</v-icon></v-btn>
+        <v-btn small class="delete-all" @click="deleteAll" title="Remove All"><v-icon small>far fa-trash-alt</v-icon></v-btn>
     </div>
 </template>
 
