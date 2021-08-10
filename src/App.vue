@@ -12,6 +12,7 @@ import Footer from './components/Footer.vue';
 import Header from './components/Header.vue';
 import Input from './components/Input.vue';
 import List from './components/List.vue';
+
 export default {
   name: 'App',
 
