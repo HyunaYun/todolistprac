@@ -1,9 +1,9 @@
 <template>
   <v-app id="app">
     <Header></Header>
-    <Input></Input>
-    <List></List>
-    <Footer></Footer>
+    <Input @addTodo="addTodo"></Input>
+    <List :propsdata="todolists" @deleteTodo="deleteTodo"></List>
+    <Footer @removeAll="deleteAll"></Footer>
   </v-app>
 </template>
 
@@ -15,12 +15,22 @@ import List from './components/List.vue';
 
 export default {
   name: 'App',
-
   components: {
     Header,
     Input,
     List,
     Footer
+  },
+  methods:{
+    addTodo(){
+
+    },
+    deleteTodo(){
+
+    },
+    deleteAll(){
+
+    }
   }
 };
 </script>

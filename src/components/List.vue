@@ -3,13 +3,18 @@
         <li>
             <span class="check"><v-icon color="red lighten-2">fas fa-check</v-icon></span>
             <span class="list">입력된 할 일 출력</span>
-            <span class="delete"><v-btn icon color="red lighten-2"><v-icon>fas fa-times</v-icon></v-btn></span>
+            <span class="delete"><v-btn icon color="red lighten-2" @click="deleteTodo(todo,index)"><v-icon small>fas fa-times</v-icon></v-btn></span>
         </li>
     </ul>
 </template>
 
 <script>
 export default {
+    methods:{
+        deleteTodo(todo, index){
+            this.$emit('deleteTodo',todo, index);
+        }
+    }
 
 }
 </script>
@@ -37,6 +42,6 @@ ul li{
 }
 .delete{
     float: right;
-    padding: 0 20px;
+    padding-right: 10px;
 }
 </style>
