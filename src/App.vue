@@ -28,5 +28,7 @@ export default {
 <style>
 #app{
   text-align: center;
+  margin: 40px auto;
+  padding-left: 0;
 }
 </style>

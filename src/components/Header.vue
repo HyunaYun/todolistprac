@@ -12,5 +12,7 @@ export default {
 
 
 <style scoped>
-
+h1{
+    padding-bottom: 10px;
+}
 </style>
