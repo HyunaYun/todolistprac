@@ -33,14 +33,22 @@ export default {
   },
   methods:{
     addTodo(newTodo){
-      this.todolists.push(newTodo);
+      if(this.todolists != ''){
+        var index = this.todolists[this.todolists.length-1].id+1;
+        this.todolists.push({completed: 'false',id: index, title: newTodo, userId: 1});
+      }else{
+        this.todolists.push({completed: 'false',id: '1', title: newTodo, userId: 1});
+        //console.log(this.todolists[this.todolists.length-1].id);
+      }
     },
     toggle(id){
-      var index = this.todolist.findIndex((item)=>item.id === id);
-      this.todolist[index].complated = !this.todolist[index].complated;
+      var index = this.todolists.findIndex((todo)=>todo.id === id);
+      this.todolists[index].completed = !this.todolists[index].completed;
     },
     deleteTodo(id){
-      this.todolists.splice(id, 1);
+      var index = this.todolists.findIndex((todo)=>todo.id === id);
+      //console.log(index);
+      this.todolists.splice(index, 1);
     },
     deleteAll(){
       this.todolists = [];

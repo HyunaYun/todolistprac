@@ -1,9 +1,10 @@
 <template>
     <ul>
-        <li v-for="todo in propsdata" :key="todo.id" :class="checked(todo.complated)">
-            <span class="check" v-show="checked"><v-icon color="red lighten-2">fas fa-check</v-icon></span>
-            <span class="list" @click="toggle(todo.id)" >{{todo.title}}</span>
-            <span class="delete"><v-btn icon color="red lighten-2" @click="deleteTodo(todo.id)"><v-icon small>fas fa-times</v-icon></v-btn></span>
+        <li v-for="todo in propsdata" :key="todo.id" :class="checked(todo.completed)" @click="toggle(todo.id)">
+            <span class="check" v-if="!todo.completed"><v-icon color="#969696">fas fa-check</v-icon></span>
+            <span class="notCheck" v-else><div></div></span>
+            <span class="list" >{{todo.title}}</span>
+            <span class="delete"><v-btn icon color="red lighten-2" @click.stop="deleteTodo(todo.id)"><v-icon small>fas fa-times</v-icon></v-btn></span>
         </li>
     </ul>
 </template>
@@ -18,9 +19,9 @@ export default {
         toggle(id){
             this.$emit('toggle', id);
         },
-        checked(complated){
-            if(complated) return {checked: true};
-            else return {checked: false};
+        checked(completed){
+            if(completed) return {checked: false};
+            else return {checked: true};
         },
     }
 
@@ -44,9 +45,18 @@ ul li{
 ul li:hover{
     background: #F9C8CC;
 }
+ul li.checked{
+    background: #E2E2E2;
+    color: #969696;
+}
 .check{
     padding: 0 20px 0 20px;
     float: left;
+}
+.notCheck div{
+    float: left;
+    width: 64px;
+    height: 40px;
 }
 .list{
     float: left;
