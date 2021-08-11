@@ -12,7 +12,7 @@ export default {
                 this.$emit('removeAll');
             }
         }
-}
+    }
 }
 </script>
 

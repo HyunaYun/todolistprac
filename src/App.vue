@@ -3,7 +3,7 @@
     <v-app id="app">
       <Header></Header>
       <Input @addTodo="addTodo"></Input>
-      <List :propsdata="todolists" @deleteTodo="deleteTodo"></List>
+      <List :propsdata="todolists" @deleteTodo="deleteTodo" @toggle="toggle"></List>
       <Footer @removeAll="deleteAll"></Footer>
     </v-app>
   </div>
@@ -17,6 +17,17 @@ import List from './components/List.vue';
 
 export default {
   name: 'App',
+  data: function(){
+      return{
+        todolists:[
+            {"id":1, "title": "delectus aut autem", "completed": false},
+            {"id":2, "title": "delectus", "completed": false},
+            {"id":3, "title": "aut autem", "completed": true},
+            {"id":4, "title": "autem", "completed": false},
+            {"id":5, "title": "aut", "completed": false}
+        ]
+      }
+    },
   components: {
     Header,
     Input,
@@ -24,14 +35,18 @@ export default {
     Footer
   },
   methods:{
-    addTodo(){
-
+    addTodo(newTodo){
+      this.todolists.push(newTodo);
     },
-    deleteTodo(){
-
+    toggle(id){
+      var index = this.todolist.findIndex((item)=>item.id === id);
+      this.todolist[index].complated = !this.todolist[index].complated;
+    },
+    deleteTodo(id){
+      this.todolists.splice(id, 1);
     },
     deleteAll(){
-
+      this.todolists = [];
     }
   }
 };

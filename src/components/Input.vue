@@ -22,7 +22,7 @@ export default {
             }else{
                 alert("할 일을 입력하세요");
             }
-        },
+         },
         clearInput(){
             this.newTodo = '';
         }
