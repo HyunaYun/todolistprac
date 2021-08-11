@@ -17,22 +17,19 @@ import List from './components/List.vue';
 
 export default {
   name: 'App',
-  data: function(){
-      return{
-        todolists:[
-            {"id":1, "title": "delectus aut autem", "completed": false},
-            {"id":2, "title": "delectus", "completed": false},
-            {"id":3, "title": "aut autem", "completed": true},
-            {"id":4, "title": "autem", "completed": false},
-            {"id":5, "title": "aut", "completed": false}
-        ]
-      }
-    },
+  data(){
+    return {
+      todolists : []
+    }
+  },
   components: {
     Header,
     Input,
     List,
     Footer
+  },
+  created:function(){
+    this.getData();
   },
   methods:{
     addTodo(newTodo){
@@ -47,6 +44,16 @@ export default {
     },
     deleteAll(){
       this.todolists = [];
+    },
+    getData(){
+      this.$http.get('https://jsonplaceholder.typicode.com/users/1/todos')
+      .then((response)=>{
+          console.log(response.data);
+          this.todolists = response.data;
+      })
+      .catch((err)=>{
+          console.log(err);
+      })
     }
   }
 };
