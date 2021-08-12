@@ -5,13 +5,22 @@
             <span class="notCheck" v-else><div></div></span>
             <span class="list" >{{todo.title}}</span>
             <span class="delete"><v-btn icon color="red lighten-2" @click.stop="deleteTodo(todo.id)"><v-icon small>fas fa-times</v-icon></v-btn></span>
+            <span class="update"><v-btn icon @click.stop="updateTodo(todo.id)"><v-icon small>far fa-edit</v-icon></v-btn></span>
         </li>
     </ul>
 </template>
 
 <script>
 export default {
-    props: ['propsdata'],
+    name: 'TodoList',
+    props: {
+        propsdata: {
+            id: Number,
+            title: String,
+            completed: Boolean,
+            userId: 1
+        }
+    },
     methods:{
         deleteTodo(id){
             this.$emit('deleteTodo',id);
@@ -23,6 +32,9 @@ export default {
             if(completed) return {checked: false};
             else return {checked: true};
         },
+        updateTodo(id){
+            this.$emit('updataTodo`', id);
+        }
     }
 
 }
@@ -61,7 +73,7 @@ ul li.checked{
 .list{
     float: left;
 }
-.delete{
+.update, .delete{
     float: right;
     padding-right: 10px;
 }

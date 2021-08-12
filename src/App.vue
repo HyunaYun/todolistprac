@@ -1,52 +1,60 @@
 <template>
-  <div class="form">
-    <v-app id="app">
-      <Header></Header>
-      <Input @addTodo="addTodo"></Input>
-      <List :propsdata="todolists" @deleteTodo="deleteTodo" @toggle="toggle"></List>
-      <Footer @removeAll="deleteAll"></Footer>
+  <div class="section">
+    <v-app ref="app">
+      <todo-header></todo-header>
+      <todo-input @addTodo="addTodo"></todo-input>
+      <todo-list :propsdata="todolists" @deleteTodo="deleteTodo" @toggle="toggle"></todo-list>
+      <todo-footer @removeAll="deleteAll"></todo-footer>
+      <todo-pagination :pageSetting="pageDataSetting(total, limit, block, this.page)" @paging="pagingFn"></todo-pagination>
     </v-app>
   </div>
 </template>
 
 <script>
-import Footer from './components/Footer.vue';
-import Header from './components/Header.vue';
-import Input from './components/Input.vue';
-import List from './components/List.vue';
+import todoFooter from './components/Footer.vue';
+import todoHeader from './components/Header.vue';
+import todoInput from './components/Input.vue';
+import todoList from './components/List.vue';
+import todoPagination from './components/TodoPagination.vue';
 
 export default {
   name: 'App',
   data(){
     return {
-      todolists : []
+      todolists : [],
+      total: this.todolists.length,
+      page: 1,
+      limit: 5,
+      block: 5
     }
   },
   components: {
-    Header,
-    Input,
-    List,
-    Footer
+    todoHeader,
+    todoInput,
+    todoList,
+    todoFooter,
+    todoPagination
   },
-  created:function(){
+  created(){
     this.getData();
+    this.pagingFn(this.page);
   },
   methods:{
     addTodo(newTodo){
       if(this.todolists != ''){
-        var index = this.todolists[this.todolists.length-1].id+1;
-        this.todolists.push({completed: 'false',id: index, title: newTodo, userId: 1});
+        let index = this.todolists[0].id+1;
+        this.todolists.unshift({completed: 'false',id: index, title: newTodo, userId: 1});
       }else{
         this.todolists.push({completed: 'false',id: '1', title: newTodo, userId: 1});
         //console.log(this.todolists[this.todolists.length-1].id);
       }
     },
     toggle(id){
-      var index = this.todolists.findIndex((todo)=>todo.id === id);
+      let index = this.todolists.findIndex((todo)=>todo.id === id);
       this.todolists[index].completed = !this.todolists[index].completed;
     },
     deleteTodo(id){
-      var index = this.todolists.findIndex((todo)=>todo.id === id);
+      let index = this.todolists.findIndex((todo)=>todo.id === id);
       //console.log(index);
       this.todolists.splice(index, 1);
     },
@@ -54,21 +62,40 @@ export default {
       this.todolists = [];
     },
     getData(){
-      this.$http.get('https://jsonplaceholder.typicode.com/users/1/todos')
+      this.$axios.get('https://jsonplaceholder.typicode.com/users/1/todos')
       .then((response)=>{
           console.log(response.data);
-          this.todolists = response.data;
+          this.todolists = response.data.reverse();
       })
       .catch((err)=>{
           console.log(err);
       })
+    },
+    pagingFn(page){
+      this.todolists = this.todolists.slice((page - 1) * this.limit, page*this.limit);
+      this.page = page;
+      this.pageDataSetting(this.total, this.limit, this.block, page);
+    },
+    pageDataSetting(total, limit, block, page){
+      const totalPage = Math.ceil(total/limit);
+      let currentPage = page;
+      const prev = currentPage > 1 ? parseInt(currentPage, 10) - parseInt(1, 10) : null;
+      const next = totalPage !== currentPage ? parseInt(currentPage, 10) + parseInt(1, 10) : null;
+      let start = (Math.ceil(currentPage/block) -1) * block + 1;
+      let end = start + block > totalPage ? totalPage : start + block -1;
+      let list = [];
+
+      for(let i=start; i<=end; i++){
+        list.push(i);
+      }
+      return{prev, next, list, currentPage}
     }
   }
 };
 </script>
 
 <style>
-.form{
+.section{
   width: 60%;
   height: 80%;
   display: block;

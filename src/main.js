@@ -9,7 +9,7 @@ import axios from 'axios'
 Vue.config.productionTip = false;
 Vue.use(Antd);
 Vue.use(Vuetify);
-Vue.prototype.$http = axios;
+Vue.prototype.$axios = axios;
 
 new Vue({
     vuetify: Vuetify,
