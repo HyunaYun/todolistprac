@@ -3,9 +3,21 @@
     <v-app ref="app">
       <todo-header></todo-header>
       <todo-input @addTodo="addTodo"></todo-input>
-      <todo-list :propsdata="todolists" @deleteTodo="deleteTodo" @toggle="toggle"></todo-list>
+      <todo-list :propsdata="todolists" @deleteTodo="deleteTodo" @toggle="toggle" :currentPage="currentPage"></todo-list>
       <todo-footer @removeAll="deleteAll"></todo-footer>
-      <todo-pagination :pageSetting="pageDataSetting(total, limit, block, this.page)" @paging="pagingFn"></todo-pagination>
+      <div class="pagination">
+        <span class="page" @click="movePrev()" >
+            <v-icon>fas fa-chevron-left</v-icon>
+        </span>
+        <span class="page">
+            <ul class="pageUl">
+                <li class="pageLi" v-for="page in list" :key="page" @click="movePage(page.index)">{{page.index}}</li>
+            </ul>
+        </span>
+        <span class="page" @click="moveNext()">
+            <v-icon>fas fa-chevron-right</v-icon>
+        </span>
+    </div>
     </v-app>
   </div>
 </template>
@@ -15,17 +27,22 @@ import todoFooter from './components/Footer.vue';
 import todoHeader from './components/Header.vue';
 import todoInput from './components/Input.vue';
 import todoList from './components/List.vue';
-import todoPagination from './components/TodoPagination.vue';
 
 export default {
   name: 'App',
   data(){
     return {
       todolists : [],
-      total: this.todolists.length,
-      page: 1,
-      limit: 5,
-      block: 5
+      list: [],
+      totalTodo: null,
+      currentPage: 1,
+      range: 1,
+      pageSize: 5,
+      block: 5,
+      totalPage: null,
+      start: null,
+      end: null,
+      countData: null
     }
   },
   components: {
@@ -33,63 +50,105 @@ export default {
     todoInput,
     todoList,
     todoFooter,
-    todoPagination
   },
   created(){
     this.getData();
-    this.pagingFn(this.page);
+  },
+  beforeUpdate(){
+    this.list = [];
+    this.pagination(this.countData, this.totalTodo, this.currentPage, this.range);
   },
   methods:{
-    addTodo(newTodo){
-      if(this.todolists != ''){
-        let index = this.todolists[0].id+1;
-        this.todolists.unshift({completed: 'false',id: index, title: newTodo, userId: 1});
-      }else{
-        this.todolists.push({completed: 'false',id: '1', title: newTodo, userId: 1});
-        //console.log(this.todolists[this.todolists.length-1].id);
-      }
-    },
-    toggle(id){
-      let index = this.todolists.findIndex((todo)=>todo.id === id);
-      this.todolists[index].completed = !this.todolists[index].completed;
-    },
-    deleteTodo(id){
-      let index = this.todolists.findIndex((todo)=>todo.id === id);
-      //console.log(index);
-      this.todolists.splice(index, 1);
-    },
-    deleteAll(){
-      this.todolists = [];
-    },
+    // axios
     getData(){
+      /*
       this.$axios.get('https://jsonplaceholder.typicode.com/users/1/todos')
       .then((response)=>{
-          console.log(response.data);
-          this.todolists = response.data.reverse();
+        console.log(response.data);
+        let reverseData = [];
+        reverseData = response.data.reverse();
+        for(let i=(this.currentPage*this.pageSize)-this.pageSize; i<this.currentPage*this.pageSize; i++){
+          this.todolists.push(reverseData[i]);
+        }
+        //this.todolists = response.data.reverse();
+        this.countData = response.data.length;
+
+        this.pagination(this.countData, this.totalTodo, this.currentPage, this.range);
       })
       .catch((err)=>{
           console.log(err);
       })
-    },
-    pagingFn(page){
-      this.todolists = this.todolists.slice((page - 1) * this.limit, page*this.limit);
-      this.page = page;
-      this.pageDataSetting(this.total, this.limit, this.block, page);
-    },
-    pageDataSetting(total, limit, block, page){
-      const totalPage = Math.ceil(total/limit);
-      let currentPage = page;
-      const prev = currentPage > 1 ? parseInt(currentPage, 10) - parseInt(1, 10) : null;
-      const next = totalPage !== currentPage ? parseInt(currentPage, 10) + parseInt(1, 10) : null;
-      let start = (Math.ceil(currentPage/block) -1) * block + 1;
-      let end = start + block > totalPage ? totalPage : start + block -1;
-      let list = [];
-
-      for(let i=start; i<=end; i++){
-        list.push(i);
+      */
+      if(localStorage.length > 0){
+        for(let i=0; i<localStorage.length; i++) {
+          this.todolists.push(localStorage.getItem(localStorage.key(i)));
+        }
       }
-      return{prev, next, list, currentPage}
+    },
+    // input data
+    addTodo(newTodo){
+      if(this.todolists != ''){
+        let value = {todo: newTodo, completed: false};
+        localStorage.setItem(this.newTodo, JSON.stringify(value));
+        this.todolists = [];
+        this.currentPage = 1;
+        this.getData();
+      }/*else{
+        this.todolists.push({completed: false, id: 1, title: newTodo, userId: 1});
+      }*/
+    },
+    // toggle listtodo
+    toggle(id){
+      let index = this.todolists.findIndex((todo)=>todo.id === id);
+      this.todolists[index].completed = !this.todolists[index].completed;
+    },
+    // delete data
+    deleteTodo(key, index){
+      console.log(key, index);
+      localStorage.removeItem(key)
+      this.todolists.splice(index, 1);
+    },
+    deleteAll(){
+      this.todolists = [];
+      localStorage.clear();
+    },
+    // pagination
+    pagination(countData, totalTodo, page, range){
+      this.totalTodo = countData;
+      this.currentPage = page;
+      this.range = range;
+
+      this.totalPage = Math.ceil(this.totalTodo / this.pageSize);
+      this.start = ((this.range - 1)/this.block) * this.block + 1;
+      this.end = this.start + this.pageSize -1;
+
+      if(this.end > this.totalPage) this.end = this.totalPage;
+      else this.end;
+
+      for(let i=this.start; i<=this.end; i++){
+        this.list.push({index: i});
+      }
+    },
+    movePage(index){
+      this.currentPage = index;
+      console.log(this.currentPage);
+      this.todolists = [];
+      this.getData();
+    },
+    /*
+    movePrev(){
+      if(this.currentPage != 1){
+        this.currentPage--;
+        return {visiblePrev: true};
+      }else return {visiblePrev: false};
+    },
+    moveNext(){
+      if(this.currentPage !== this.totalPage){
+        this.currentPage++;
+        return {visibleNext: true};
+      }else return {visibleNext: false};
     }
+*/
   }
 };
 </script>
@@ -105,5 +164,20 @@ export default {
   text-align: center;
   margin: 40px auto;
   padding-left: 0;
+}
+.pagination{
+    height: 50px;
+    text-align: center;
+    margin-top: 20px;
+}
+.page{
+    display: inline-block;
+}
+.pageUl .pageLi{
+    list-style: none;
+    text-align: center;
+    padding-right: 24px;
+    display: inline-block;
+    cursor: pointer;
 }
 </style>

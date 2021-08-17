@@ -1,31 +1,58 @@
 <template>
-    <div v-if="pageSetting.list.length" class="page-list">
-        <v-btn class="prev" v-if="pageSetting.prev !== null" @click="pageSetting.prev !== null ? sendPage(pageSetting.prev) : ''">
-
-        </v-btn>
-        <ul>
-            <li :class="{active: page === pageSetting.currentPage}" v-for="page in pageSetting.list" :key="page" @click="sendPage(page)">
-                {{page}}
-            </li>
-        </ul>
-        <v-btn class="next" v-if="pageSetting.next !== null" @click="pageSetting.next !== null ? sendPage(pageSetting.next) : ''">
-
-        </v-btn>
+    <div class="pagination">
+        <span :class="visiblePrev" @click="paging(pageSetting.prev)">
+            <v-icon>fas fa-chevron-left</v-icon>
+        </span>
+        <span>
+            <ul>
+                <li @click="paging(page)" v-for="page in pageSetting.currentPage" :key="page">{{page.list.index}}</li>
+            </ul>
+        </span>
+        <span :class="visibleNext" @click="paging(pageSetting.next)">
+            <v-icon>fas fa-chevron-right</v-icon>
+        </span>
     </div>
 </template>
 
 <script>
 export default{
-    name: 'TodoPagination',
-    props: ['pageSetting'],
+    name: 'pagination',
+    props: {
+        pageSetting : {
+            prev : null,
+            next: null,
+            list : [],
+            cPage: null
+        }
+    },
     methods:{
-        sendPage(page){
+        paging(page){
             this.$emit('paging', page);
+        },
+        visiblePrev(){
+            if(this.cPage == 1) return {visiblePrev: false}
+            else return {visiblePrev: true}
+        },
+        visibleNext(){
+            if(this.cPage == )
         }
     }
 }
 </script>
 
 <style scoped>
-
+.pagination{
+    height: 50px;
+    text-align: center;
+    margin-top: 20px;
+}
+span{
+    display: inline-block;
+}
+ul li{
+    list-style: none;
+    text-align: center;
+    padding-right: 24px;
+    display: inline-block;
+}
 </style>

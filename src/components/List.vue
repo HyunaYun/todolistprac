@@ -1,11 +1,11 @@
 <template>
     <ul>
-        <li v-for="todo in propsdata" :key="todo.id" :class="checked(todo.completed)" @click="toggle(todo.id)">
+        <li v-for="todo in propsdata" :key="todo.key" :class="checked()" @click="toggle(todo.key)">
             <span class="check" v-if="!todo.completed"><v-icon color="#969696">fas fa-check</v-icon></span>
             <span class="notCheck" v-else><div></div></span>
-            <span class="list" >{{todo.title}}</span>
-            <span class="delete"><v-btn icon color="red lighten-2" @click.stop="deleteTodo(todo.id)"><v-icon small>fas fa-times</v-icon></v-btn></span>
-            <span class="update"><v-btn icon @click.stop="updateTodo(todo.id)"><v-icon small>far fa-edit</v-icon></v-btn></span>
+            <span class="list" >{{todo.value}}</span>
+            <span class="delete"><v-btn icon color="red lighten-2" @click.stop="deleteTodo(todo.key, index)"><v-icon small>fas fa-times</v-icon></v-btn></span>
+            <span class="update"><v-btn icon @click.stop="updateTodo(todo.key)"><v-icon small>far fa-edit</v-icon></v-btn></span>
         </li>
     </ul>
 </template>
@@ -15,25 +15,23 @@ export default {
     name: 'TodoList',
     props: {
         propsdata: {
-            id: Number,
-            title: String,
-            completed: Boolean,
-            userId: 1
+            key : String,
+            value: String
         }
     },
     methods:{
-        deleteTodo(id){
-            this.$emit('deleteTodo',id);
+        deleteTodo(key, index){
+            this.$emit('deleteTodo',key, index);
         },
-        toggle(id){
-            this.$emit('toggle', id);
+        toggle(key){
+            this.$emit('toggle', key);
         },
-        checked(completed){
-            if(completed) return {checked: false};
-            else return {checked: true};
+        checked(){
+            // if(completed) return {checked: false};
+            // else return {checked: true}
         },
-        updateTodo(id){
-            this.$emit('updataTodo`', id);
+        updateTodo(key){
+            this.$emit('updataTodo`', key);
         }
     }
 
